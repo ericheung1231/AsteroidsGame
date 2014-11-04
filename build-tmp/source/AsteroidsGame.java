@@ -15,12 +15,18 @@ import java.io.IOException;
 public class AsteroidsGame extends PApplet {
 
 SpaceShip bob;
+Asteroid[] joe;
 int scrSiz;
-public void setup() 
+public void setup()
 {
   scrSiz = 500;
   size(scrSiz,scrSiz);
   bob = new SpaceShip();
+  joe = new Asteroid[10];
+  for (int i=0; i<= joe.length-1; i++)
+  {
+    joe[i] = new Asteroid();
+  }
 }
 public void draw() 
 {
@@ -28,6 +34,12 @@ public void draw()
   bob.show();
   bob.keyPressed();
   bob.move();
+  for (int i=0; i<= joe.length-1; i++)
+  {
+    joe[i].show();
+    joe[i].move();
+  }
+  
 }
 class SpaceShip extends Floater  
 {   
@@ -45,8 +57,6 @@ class SpaceShip extends Floater
   public SpaceShip()
   {
     corners = 4;  
-    // int[] xCorners = { 5,-2,-1,-2 };   
-    // int[] yCorners = { 0,2,0,-2 };
     xCorners = new int[corners];
     yCorners = new int[corners];
       xCorners[0]=10;
@@ -73,25 +83,116 @@ class SpaceShip extends Floater
     }
     if (keyPressed && key == 'a')
     {
-      bob.rotate(-3);
+      rotate(-3);
     }
     if (keyPressed && key == 'w')
     {
-      bob.accelerate(0.5f);
+      accelerate(0.5f);
     }
     if (keyPressed && key == 's')
     {
-      bob.accelerate(-0.5f);
+      accelerate(-0.5f);
     }
     if (keyPressed && key == 32)
     {
-      bob.setX((int)(Math.random()*scrSiz));
-      bob.setY((int)(Math.random()*scrSiz));
-      bob.setDirectionX(0);
-      bob.setDirectionY(0);
+      setX((int)(Math.random()*scrSiz));
+      setY((int)(Math.random()*scrSiz));
+      setDirectionX(0);
+      setDirectionY(0);
     }
   }
 }
+
+class Asteroid extends Floater
+{
+
+  public void setX(int x) {myCenterX = x;}  
+  public int getX() {return (int)myCenterX;} 
+  public void setY(int y) {myCenterY = y;} 
+  public int getY() {return (int)myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}   
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}     
+  public double getDirectionY() {return myDirectionY;}  
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}  
+  public double getPointDirection() {return myPointDirection;}
+  
+  public int rotSpeed, scal;
+  public double speed, ang;
+  public Asteroid()
+  {
+    rotSpeed = (int)(Math.random()*2)+2;
+    scal = (int)(Math.random()*4)+2;
+    corners = 6;  
+    xCorners = new int[corners];
+    yCorners = new int[corners];
+      xCorners[0]=(int)(Math.random()*5*scal)+5*scal;
+      xCorners[1]=(int)(Math.random()*3*scal);
+      xCorners[2]=-(int)(Math.random()*3*scal);
+      xCorners[3]=(int)(Math.random()*5*scal)-5*scal;
+      xCorners[4]=-(int)(Math.random()*3*scal);
+      xCorners[5]=(int)(Math.random()*3*scal);
+      yCorners[0]=(int)(Math.random()*3*scal)-2*scal;
+      yCorners[1]=(int)(Math.random()*3*scal)-5*scal;
+      yCorners[2]=(int)(Math.random()*3*scal)-5*scal;
+      yCorners[3]=(int)(Math.random()*3*scal)-2*scal;
+      yCorners[4]=(int)(Math.random()*3*scal)+5*scal;
+      yCorners[5]=(int)(Math.random()*3*scal)+5*scal; 
+    myColor = 255;   
+    myCenterX = 150; 
+    myCenterY = 150;
+    speed = Math.random()*5;
+    ang = Math.random()*2*Math.PI;
+    myDirectionX = Math.cos(ang)*speed;
+    myDirectionY = Math.sin(ang)*speed; 
+    myPointDirection = 0;
+  }
+
+  public void move()
+  {
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY;
+    myPointDirection+=rotSpeed;     
+
+    //wrap around screen    
+    if(myCenterX >width)
+    {     
+      myCenterX = 0;    
+    }    
+    else if (myCenterX<0)
+    {     
+      myCenterX = width;    
+    }    
+    if(myCenterY >height)
+    {    
+      myCenterY = 0;    
+    }   
+    else if (myCenterY < 0)
+    {     
+      myCenterY = height;    
+    } 
+
+  }
+
+  public void show ()
+  {             
+    fill(0);   
+    stroke(myColor);    
+    //convert degrees to radians for sin and cos         
+    double dRadians = myPointDirection*(Math.PI/180);                 
+    int xRotatedTranslated, yRotatedTranslated;    
+    beginShape();         
+    for(int nI = 0; nI < corners; nI++)    
+    {     
+      //rotate and translate the coordinates of the floater using current direction 
+      xRotatedTranslated = (int)((xCorners[nI]* Math.cos(dRadians)) - (yCorners[nI] * Math.sin(dRadians))+myCenterX);     
+      yRotatedTranslated = (int)((xCorners[nI]* Math.sin(dRadians)) + (yCorners[nI] * Math.cos(dRadians))+myCenterY);      
+      vertex(xRotatedTranslated,yRotatedTranslated);    
+    }   
+    endShape(CLOSE);
+  } 
+}
+
 abstract class Floater //Do NOT modify the Floater class! Make changes in the SpaceShip class 
 {   
   protected int corners;  //the number of corners, a triangular floater has 3   
@@ -103,7 +204,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   protected double myPointDirection; //holds current direction the ship is pointing in degrees    
   abstract public void setX(int x);  
   abstract public int getX();   
-  abstract public void setY(int y);   
+  abstract public void setY(int y);
   abstract public int getY();   
   abstract public void setDirectionX(double x);   
   abstract public double getDirectionX();   
