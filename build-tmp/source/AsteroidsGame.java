@@ -117,11 +117,18 @@ class Asteroid extends Floater
   public void setPointDirection(int degrees) {myPointDirection = degrees;}  
   public double getPointDirection() {return myPointDirection;}
   
-  public int rotSpeed, scal;
+  public int rotSpeed, scal, posneg;
   public double speed, ang;
   public Asteroid()
   {
-    rotSpeed = (int)(Math.random()*2)+2;
+    if ( Math.random() > 0.5f)
+    {
+      rotSpeed = (int)(Math.random()*2)+2;
+    }
+    else
+    {
+      rotSpeed = ((int)(Math.random()*2)+2)*(-1);
+    }
     scal = (int)(Math.random()*4)+2;
     corners = 6;  
     xCorners = new int[corners];
