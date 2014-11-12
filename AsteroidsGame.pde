@@ -1,29 +1,35 @@
-SpaceShip bob;
-Asteroid[] joe;
-int scrSiz;
+SpaceShip ship;
+ArrayList <Asteroid> astList;
+int scrSiz, astNum;
 public void setup()
 {
   scrSiz = 500;
+  astNum = 20;
   size(scrSiz,scrSiz);
-  bob = new SpaceShip();
-  joe = new Asteroid[10];
-  for (int i=0; i<= joe.length-1; i++)
+  ship = new SpaceShip();
+  astList = new ArrayList <Asteroid>();
+  for (int i=0; i< astNum; i++)
   {
-    joe[i] = new Asteroid();
+    astList.add(new Asteroid());
   }
+  System.out.println(astList.size());
 }
 public void draw() 
 {
   background(0);
-  bob.show();
-  bob.keyPressed();
-  bob.move();
-  for (int i=0; i<= joe.length-1; i++)
+  ship.show();
+  ship.keyPressed();
+  ship.move();
+  for (int i=0; i< astList.size(); i++)
   {
-    joe[i].show();
-    joe[i].move();
+    Asteroid a = (Asteroid) astList.get(i);
+    a.show();
+    a.move();
+    if (dist((float)a.myCenterX,(float)a.myCenterY, (float)ship.myCenterX, (float)ship.myCenterY)<20)
+    {
+      astList.remove(i);
+    }
   }
-  
 }
 class SpaceShip extends Floater  
 {   
@@ -89,7 +95,6 @@ class SpaceShip extends Floater
 
 class Asteroid extends Floater
 {
-
   public void setX(int x) {myCenterX = x;}  
   public int getX() {return (int)myCenterX;} 
   public void setY(int y) {myCenterY = y;} 
@@ -100,9 +105,9 @@ class Asteroid extends Floater
   public double getDirectionY() {return myDirectionY;}  
   public void setPointDirection(int degrees) {myPointDirection = degrees;}  
   public double getPointDirection() {return myPointDirection;}
-  
   public int rotSpeed, scal;
   public double speed, ang;
+  //
   public Asteroid()
   {
     if (Math.random() > 0.5)
@@ -258,6 +263,6 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
       vertex(xRotatedTranslated,yRotatedTranslated);    
     }   
     endShape(CLOSE);  
-  }   
+  }  
 } 
 
