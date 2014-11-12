@@ -12,7 +12,6 @@ public void setup()
   {
     astList.add(new Asteroid());
   }
-  System.out.println(astList.size());
 }
 public void draw() 
 {
