@@ -51,7 +51,6 @@ public void draw()
       }
     }
   }
-  System.out.println(bullet.size());
 }
 
 
