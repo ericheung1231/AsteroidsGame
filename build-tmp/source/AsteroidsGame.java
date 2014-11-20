@@ -16,6 +16,7 @@ public class AsteroidsGame extends PApplet {
 
 SpaceShip ship;
 ArrayList <Asteroid> astList;
+ArrayList <Bullets> bullet;
 int scrSiz, astNum;
 public void setup()
 {
@@ -23,30 +24,53 @@ public void setup()
   astNum = 20;
   size(scrSiz,scrSiz);
   ship = new SpaceShip();
+  bullet = new ArrayList <Bullets>();
   astList = new ArrayList <Asteroid>();
   for (int i=0; i< astNum; i++)
   {
     astList.add(new Asteroid());
   }
-  System.out.println(astList.size());
 }
+
+public void mousePressed()
+{
+  if (mousePressed == true)
+    {
+      bullet.add(new Bullets(ship));
+    }
+}
+
 public void draw() 
 {
   background(0);
+  for (int i=0; i< bullet.size(); i++)
+  {
+    bullet.get(i).show();
+    bullet.get(i).move();
+  }
   ship.show();
   ship.keyPressed();
   ship.move();
   for (int i=0; i< astList.size(); i++)
   {
-    Asteroid a = (Asteroid) astList.get(i);
-    a.show();
-    a.move();
-    if (dist((float)a.myCenterX,(float)a.myCenterY, (float)ship.myCenterX, (float)ship.myCenterY)<20)
+    astList.get(i).show();
+    astList.get(i).move();
+    for(int b=0; b < bullet.size(); b++)
     {
+      if (dist((float)astList.get(i).getX(),(float)astList.get(i).getY(), (float)bullet.get(b).getX(), (float)bullet.get(b).getY())<20)
+      {
       astList.remove(i);
+      }
+      if (bullet.get(b).getX() <0 || bullet.get(b).getY()<0 || bullet.get(b).getY()>scrSiz || bullet.get(b).getX()>scrSiz)
+      {
+      bullet.remove(b);
+      }
     }
   }
+  System.out.println(bullet.size());
 }
+
+
 class SpaceShip extends Floater  
 {   
   public void setX(int x) {myCenterX = x;}  
@@ -83,29 +107,64 @@ class SpaceShip extends Floater
 
   public void keyPressed()
   {
-    if (keyPressed && key == 'd')
+    if (keyPressed && keyCode == RIGHT)
     {
-      rotate(3);
+      ship.rotate(5);
     }
-    if (keyPressed && key == 'a')
+    if (keyPressed && keyCode == LEFT)
     {
-      rotate(-3);
+     ship.rotate(-5);
     }
-    if (keyPressed && key == 'w')
+    if (keyPressed && keyCode == UP)
     {
-      accelerate(0.5f);
+      ship.accelerate(0.1f);
     }
-    if (keyPressed && key == 's')
+    if (keyPressed && keyCode == DOWN)
     {
-      accelerate(-0.5f);
+      ship.accelerate(-0.1f);
     }
-    if (keyPressed && key == 32)
+    if (keyPressed && keyCode == CONTROL)
     {
-      setX((int)(Math.random()*scrSiz));
-      setY((int)(Math.random()*scrSiz));
-      setDirectionX(0);
-      setDirectionY(0);
+      ship.setX((int)(Math.random()*scrSiz));
+      ship.setY((int)(Math.random()*scrSiz));
+      ship.setDirectionX(0);
+      ship.setDirectionY(0);
     }
+  }
+}
+
+class Bullets extends Floater
+{
+  public void setX(int x) {myCenterX = x;}  
+  public int getX() {return (int)myCenterX;} 
+  public void setY(int y) {myCenterY = y;} 
+  public int getY() {return (int)myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}   
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}     
+  public double getDirectionY() {return myDirectionY;}  
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}  
+  public double getPointDirection() {return myPointDirection;}
+
+  public Bullets(SpaceShip theShip)
+  {
+    myCenterX = theShip.getX();
+    myCenterY = theShip.getY();
+    myPointDirection = theShip.getPointDirection();
+    double dRadians =myPointDirection*(Math.PI/180);
+    myDirectionX = 5 * Math.cos(dRadians) + theShip.getDirectionX();
+    myDirectionY = 5 * Math.sin(dRadians) + theShip.getDirectionY();
+  }
+  public void show()
+  {
+    fill(255,255,0);
+    noStroke();
+    ellipse((float)myCenterX, (float)myCenterY, 5, 5);
+  }
+  public void move()
+  {
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY;
   }
 }
 
@@ -151,8 +210,8 @@ class Asteroid extends Floater
       yCorners[4]=(int)(Math.random()*3*scal)+5*scal;
       yCorners[5]=(int)(Math.random()*3*scal)+5*scal; 
     myColor = 255;   
-    myCenterX = 150; 
-    myCenterY = 150;
+    myCenterX = (Math.random()*scrSiz); 
+    myCenterY = (Math.random()*scrSiz);
     speed = Math.random()*5;
     ang = Math.random()*2*Math.PI;
     myDirectionX = Math.cos(ang)*speed;
@@ -167,21 +226,21 @@ class Asteroid extends Floater
     myPointDirection+=rotSpeed;     
 
     //wrap around screen    
-    if(myCenterX >width)
+    if(myCenterX >scrSiz)
     {     
       myCenterX = 0;    
     }    
     else if (myCenterX<0)
     {     
-      myCenterX = width;    
+      myCenterX = scrSiz;    
     }    
-    if(myCenterY >height)
+    if(myCenterY >scrSiz)
     {    
       myCenterY = 0;    
     }   
     else if (myCenterY < 0)
     {     
-      myCenterY = height;    
+      myCenterY = scrSiz;    
     } 
 
   }
