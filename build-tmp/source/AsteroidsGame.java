@@ -17,11 +17,14 @@ public class AsteroidsGame extends PApplet {
 SpaceShip ship;
 ArrayList <Asteroid> astList;
 ArrayList <Bullets> bullet;
-int scrSiz, astNum;
+int scrSiz, astNum, rectWidth, rectHeight;
+boolean endGame;
 public void setup()
 {
   scrSiz = 500;
   astNum = 20;
+  rectWidth = 200;
+  rectHeight = 100;
   size(scrSiz,scrSiz);
   ship = new SpaceShip();
   bullet = new ArrayList <Bullets>();
@@ -30,46 +33,92 @@ public void setup()
   {
     astList.add(new Asteroid());
   }
+  endGame = false;
 }
 
 public void mousePressed()
 {
-  if (mousePressed == true)
+  if (mousePressed == true && endGame == false)
     {
       bullet.add(new Bullets(ship));
+    }
+  if (endGame == true)
+    {
+      if (mousePressed == true)
+      {
+        if (mouseX<(scrSiz/2 - rectWidth/2)+ rectWidth && mouseX>(scrSiz/2 - rectWidth/2))
+        {
+          if (mouseY<(scrSiz/2 + rectHeight) && mouseY>scrSiz/2)
+          {
+            endGame = false;
+          }
+        }
+      }
     }
 }
 
 public void draw() 
 {
   background(0);
-  for (int i=0; i< bullet.size(); i++)
+  if (endGame == false)
   {
-    bullet.get(i).show();
-    bullet.get(i).move();
-  }
-  ship.show();
-  ship.keyPressed();
-  ship.move();
-  for (int i=0; i< astList.size(); i++)
-  {
-    astList.get(i).show();
-    astList.get(i).move();
-    for(int b=0; b < bullet.size(); b++)
+    for (int i=0; i< bullet.size(); i++)
     {
-      if (dist((float)astList.get(i).getX(),(float)astList.get(i).getY(), (float)bullet.get(b).getX(), (float)bullet.get(b).getY())<20)
+      bullet.get(i).show();
+      bullet.get(i).move();
+    }
+    ship.show();
+    ship.keyPressed();
+    ship.move();
+    for (int i=0; i< astList.size()-1; i++)
+    {
+      astList.get(i).show();
+      astList.get(i).move();
+      for(int b=0; b < bullet.size(); b++)
       {
-      astList.remove(i);
-      }
-      if (bullet.get(b).getX() <0 || bullet.get(b).getY()<0 || bullet.get(b).getY()>scrSiz || bullet.get(b).getX()>scrSiz)
-      {
-      bullet.remove(b);
+        if (dist((float)astList.get(i).getX(),(float)astList.get(i).getY(), (float)bullet.get(b).getX(), (float)bullet.get(b).getY())<20)
+        {
+        astList.remove(i);
+        }
+        // if (bullet.get(b).getX() <0 || bullet.get(b).getY()<0 || bullet.get(b).getY()>scrSiz || bullet.get(b).getX()>scrSiz)
+        // {
+        // bullet.remove(b);
+        // }
+        if (dist((float)astList.get(i).getX(),(float)astList.get(i).getY(), (float)ship.getX(), (float)ship.getY())<10)
+        {
+        endGame = true;
+        astList.get(i).setX((int)(Math.random()*scrSiz));
+        astList.get(i).setY((int)(Math.random()*scrSiz));
+        if (astList.size()< astNum)
+        {
+          for (int e=astList.size(); e<astNum; e++)
+          {
+            astList.add(new Asteroid());
+          }
+        }
+        ship.setX(scrSiz/2);
+        ship.setY(scrSiz/2);
+        ship.setDirectionX(0);
+        ship.setDirectionY(0);
+        ship.setPointDirection(-90);
+        }
       }
     }
   }
   System.out.println(bullet.size());
-}
 
+  if (endGame == true)
+  {
+    fill(255);
+    textAlign(CENTER,CENTER);
+    textSize(50);
+    text("Game Over", scrSiz/2, scrSiz/2 - rectHeight);
+    text("Retry", scrSiz/2, scrSiz/2 + rectHeight/2);
+    stroke(255);
+    noFill();
+    rect(scrSiz/2 - rectWidth/2, scrSiz/2, rectWidth, rectHeight);
+  }
+}
 
 class SpaceShip extends Floater  
 {   
@@ -98,8 +147,8 @@ class SpaceShip extends Floater
       yCorners[2]=0;
       yCorners[3]=-5;  
     myColor = 255;   
-    myCenterX = 250; 
-    myCenterY = 250;   
+    myCenterX = scrSiz/2; 
+    myCenterY = scrSiz/2;   
     myDirectionX = 0; 
     myDirectionY = 0; 
     myPointDirection = -90;
