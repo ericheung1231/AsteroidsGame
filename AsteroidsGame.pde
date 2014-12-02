@@ -85,11 +85,12 @@ public void draw()
         ship.setDirectionX(0);
         ship.setDirectionY(0);
         ship.setPointDirection(-90);
+        bullet.remove(b);
         }
       }
     }
   }
-  System.out.println(bullet.size());
+ 
 
   if (endGame == true)
   {
