@@ -18,7 +18,7 @@ SpaceShip ship;
 ArrayList <Asteroid> astList;
 ArrayList <Bullets> bullet;
 int scrSiz, astNum, rectWidth, rectHeight;
-boolean endGame;
+boolean endGame, win;
 public void setup()
 {
   scrSiz = 500;
@@ -80,13 +80,11 @@ public void draw()
         {
         astList.remove(i);
         }
-        // if (bullet.get(b).getX() <0 || bullet.get(b).getY()<0 || bullet.get(b).getY()>scrSiz || bullet.get(b).getX()>scrSiz)
-        // {
-        // bullet.remove(b);
-        // }
+
         if (dist((float)astList.get(i).getX(),(float)astList.get(i).getY(), (float)ship.getX(), (float)ship.getY())<10)
         {
         endGame = true;
+        win = false;
         astList.get(i).setX((int)(Math.random()*scrSiz));
         astList.get(i).setY((int)(Math.random()*scrSiz));
         if (astList.size()< astNum)
@@ -104,17 +102,46 @@ public void draw()
         bullet.remove(b);
         }
       }
+
+    if (astList.size() == 1)
+        {
+        endGame = true;
+        win = true;
+        astList.get(i).setX((int)(Math.random()*scrSiz));
+        astList.get(i).setY((int)(Math.random()*scrSiz));
+        if (astList.size()< astNum)
+        {
+          for (int e=astList.size(); e<astNum; e++)
+          {
+            astList.add(new Asteroid());
+          }
+        }
+        ship.setX(scrSiz/2);
+        ship.setY(scrSiz/2);
+        ship.setDirectionX(0);
+        ship.setDirectionY(0);
+        ship.setPointDirection(-90);
+        }
     }
   }
  
 
-  if (endGame == true)
+  if(endGame == true)
   {
     fill(255);
     textAlign(CENTER,CENTER);
     textSize(50);
-    text("Game Over", scrSiz/2, scrSiz/2 - rectHeight);
-    text("Retry", scrSiz/2, scrSiz/2 + rectHeight/2);
+    if (win == false)
+    {
+        text("Game Over", scrSiz/2, scrSiz/2 - rectHeight);
+        text("Retry", scrSiz/2, scrSiz/2 + rectHeight/2);
+    }
+    if (win == true)
+    {
+        text("YOU WIN", scrSiz/2, scrSiz/2 - rectHeight);
+        textSize(30);
+        text("New Game", scrSiz/2, scrSiz/2 + rectHeight/2);
+    }
     stroke(255);
     noFill();
     rect(scrSiz/2 - rectWidth/2, scrSiz/2, rectWidth, rectHeight);
