@@ -68,6 +68,7 @@ public void draw()
       bullet.get(i).move();
     }
     ship.show();
+    ship.rotate(ship);
     ship.keyPressed();
     ship.move();
     for (int i=0; i< astList.size()-1; i++)
@@ -99,9 +100,12 @@ public void draw()
         ship.setDirectionX(0);
         ship.setDirectionY(0);
         ship.setPointDirection(-90);
-        bullet.remove(b);
+        for(int q=0; q < bullet.size(); q++)
+        {bullet.remove(q);}
         }
       }
+
+      println(bullet.size());
 
     if (astList.size() == 1)
         {
@@ -182,17 +186,33 @@ class SpaceShip extends Floater
     myPointDirection = -90;
   }
 
+  public void rotate(SpaceShip theShip)
+  {  
+     //first quadrant   
+     if (mouseX>theShip.getX() && mouseY<theShip.getY())
+     {
+      myPointDirection = (-1)*(180/Math.PI)*Math.atan(Math.abs((double)mouseY - (double)theShip.getY())/Math.abs((double)mouseX - (double)theShip.getX()));
+     }
+     //second quadrant
+     if (mouseX<theShip.getX() && mouseY<theShip.getY())
+     {
+      myPointDirection = 180 + (180/Math.PI)*Math.atan(Math.abs((double)mouseY - (double)theShip.getY())/Math.abs((double)mouseX - (double)theShip.getX()));
+     }
+     //third quadrant
+     if (mouseX<theShip.getX() && mouseY>theShip.getY())
+     {
+      myPointDirection = 180 - (180/Math.PI)*Math.atan(Math.abs((double)mouseY - (double)theShip.getY())/Math.abs((double)mouseX - (double)theShip.getX()));
+     }
+     //fourth quadrant
+     if (mouseX>theShip.getX() && mouseY>theShip.getY())
+     {
+      myPointDirection = (180/Math.PI)*Math.atan(Math.abs((double)mouseY - (double)theShip.getY())/Math.abs((double)mouseX - (double)theShip.getX()));
+     }
+  }
+
   public void keyPressed()
   {
-    if (keyPressed && keyCode == RIGHT)
-    {
-      ship.rotate(5);
-    }
-    if (keyPressed && keyCode == LEFT)
-    {
-     ship.rotate(-5);
-    }
-    if (keyPressed && keyCode == UP)
+    if (keyPressed && key == 32)
     {
       ship.accelerate(0.1f);
     }
