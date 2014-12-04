@@ -105,8 +105,6 @@ public void draw()
         }
       }
 
-      println(bullet.size());
-
     if (astList.size() == 1)
         {
         endGame = true;
