@@ -218,7 +218,7 @@ class SpaceShip extends Floater
     {
       ship.accelerate(-0.1f);
     }
-    if (keyPressed && keyCode == CONTROL)
+    if (keyPressed && keyCode == ALT)
     {
       ship.setX((int)(Math.random()*scrSiz));
       ship.setY((int)(Math.random()*scrSiz));
